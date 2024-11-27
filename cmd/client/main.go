@@ -3,12 +3,17 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"project/internal/client"
 )
 
 func main() {
-	cl := client.NewFibonacciClient("http://localhost:8080")
+	apiURL := os.Getenv("API_URL")
+	if apiURL == "" {
+		apiURL = "http://localhost:8080"
+	}
 
+	cl := client.NewFibonacciClient(apiURL)
 	n := 25
 	res, err := cl.SendFibonacciRequest(n)
 	if err != nil {

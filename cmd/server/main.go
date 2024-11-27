@@ -3,11 +3,17 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"project/internal/server"
 )
 
 func main() {
-	con, err := server.ConnectingToRabbitmq("amqp://guest:guest@localhost:5672/")
+	rabbitmqURL := os.Getenv("RABBITMQ_URL")
+	if rabbitmqURL == "" {
+		rabbitmqURL = "amqp://guest:guest@localhost:5672/"
+	}
+
+	con, err := server.ConnectingToRabbitmq(rabbitmqURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}

@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: server
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    ports:
+      - "8080:8080"
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: client
+    depends_on:
+      - server
+    environment:
+      - API_URL=http://server:8080
